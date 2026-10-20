@@ -1,0 +1,54 @@
+{% load static %}<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block titre %}Suivi de colis{% endblock %} </title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'colis/style.css' %}">
+</head>
+<body>
+<header class="entete">
+
+</header>
+{% if messages %}<div class="conteneur messages">{% for m in messages %}<p class="message {{ m.tags }}" role="status">{{ m }}</p>{% endfor %}</div>{% endif %}
+<main>
+
+<section class="conteneur">
+  <a class="retour" href="{% url 'accueil' %}">← Nouvelle recherche</a>
+  <div class="titre-ligne">
+    <h1>Colis {{ colis.numero_suivi }}</h1>
+    <span class="pastille">{{ Messages.statut }}</span>
+  </div>
+  <p class="resume">{{ colis.ville_depart }} → {{ colis.ville_arrivee }}{% if colis.date_livraison_estimee %} · Livraison estimée : {{ colis.date_livraison_estimee|date:"d/m/Y" }}{% endif %}</p>
+
+  <div class="carte etapes">
+    {% for e in etapes %}
+    <div class="etape {{ e.etat }}"><div class="barre"></div><p>{{ e.label }}</p></div>
+    {% endfor %}
+  </div>
+
+  <div class="deux-col">
+    <div class="carte">
+      <h2>Détails de l'envoi</h2>
+      <p class="etiquette">Destinataire</p><p class="valeur">{{ colis.destinataire_masque }}</p>
+      <p class="etiquette">Motif</p><p class="valeur">{{ Messages.motif }}</p>
+      <p class="etiquette">Description</p><p class="valeur">{{ Messages.contenu }} kg</p>
+    </div>
+    <div class="carte">
+      <h2>Historique du trajet</h2>
+      {% for ev in evenements %}
+      <div class="evenement">
+        <div class="quand">{{ ev.date_heure|date:"d/m/Y" }} · {{ ev.date_heure|time:"H:i" }}</div>
+        <div><p class="ev-titre">{{ ev.description }}</p><p class="ev-lieu">{{ ev.lieu }}</p></div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+</main>
+<footer class="pied">© {% now "Y" %} </footer>
+<script src="{% static 'js/menu.js' %}"></script>
+</body>
+</html>
+

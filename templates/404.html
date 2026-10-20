@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block titre %}Page introuvable{% endblock %}
+{% block contenu %}
+<section class="conteneur etroit">
+  <h1 class="titre-page">Page introuvable</h1>
+  <p class="intro">Cette page n'existe pas ou le numéro de suivi est incorrect.</p>
+  <a class="bouton accent" href="{% url 'accueil' %}">Retour à l'accueil</a>
+</section>
+{% endblock %}

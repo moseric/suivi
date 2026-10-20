@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block titre %}Connexion{% endblock %}
+{% block contenu %}
+<section class="conteneur etroit">
+  <h1 class="titre-page">Connexion</h1>
+  <form class="carte" method="post">{% csrf_token %}
+    {% include "colis/_form.html" %}
+    <input type="hidden" name="next" value="{{ next }}">
+    <button class="bouton accent" type="submit">Se connecter</button>
+    <p class="aide">Pas encore de compte ? <a href="{% url 'inscription' %}">Créer un compte</a></p>
+  </form>
+</section>
+{% endblock %}

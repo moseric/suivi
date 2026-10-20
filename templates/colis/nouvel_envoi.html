@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block titre %}Expédier un colis{% endblock %}
+{% block contenu %}
+<section class="conteneur etroit">
+  <h1 class="titre-page">Expédier un colis</h1>
+  <form class="carte" method="post">{% csrf_token %}
+    {% include "colis/_form.html" %}
+    <button class="bouton accent" type="submit">Enregistrer l'envoi</button>
+  </form>
+</section>
+{% endblock %}

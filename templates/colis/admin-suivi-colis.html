@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Administration – Suivi de colis</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--marine:#12263F;--encre:#0F1B2D;--accent:#C2410C;--bord:#DDE2E9;--fond:#F6F7F9;--gris:#3B4A5E}
+*{box-sizing:border-box}
+body{margin:0;font-family:Manrope,system-ui,sans-serif;background:var(--fond);color:var(--encre);display:flex;min-height:100vh}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+aside{width:240px;flex:none;background:var(--marine);color:#fff;padding:28px 20px}
+aside h1{margin:0 0 28px;font-size:18px;font-weight:800;line-height:1.3}
+aside a{display:block;padding:10px 12px;border-radius:8px;color:#D6DEE9;text-decoration:none;font-weight:600;margin-bottom:4px}
+aside a.actif{background:#1F3A5C;color:#fff}
+main{flex:1;min-width:0;padding:32px 40px}
+.haut{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center;margin-bottom:24px}
+.haut h2{margin:0;font-size:30px;font-weight:800}
+button,select,input{font:inherit}
+.btn{border:0;border-radius:10px;padding:12px 20px;font-weight:800;color:#fff;background:var(--accent);cursor:pointer}
+.btn.sec{background:#fff;color:var(--marine);border:1px solid #8A96A8;font-weight:600}
+.compteurs{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:24px}
+.compteurs div{background:#fff;border:1px solid var(--bord);border-radius:12px;padding:14px 20px}
+.compteurs b{display:block;font-size:26px;font-weight:800}
+.compteurs span{font-size:14px;color:var(--gris)}
+.outils{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:16px}
+.outils input,.outils select{padding:12px 14px;border:1px solid #8A96A8;border-radius:10px;background:#fff}
+.outils input{flex:1;min-width:220px}
+.tableau{background:#fff;border:1px solid var(--bord);border-radius:14px;overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:820px}
+th,td{text-align:left;padding:14px 16px;border-bottom:1px solid var(--bord);vertical-align:middle}
+th{font-size:14px;color:var(--gris);font-weight:600;background:#FAFBFC}
+tr:last-child td{border-bottom:0}
+.num{font-weight:800}
+.p{display:inline-block;padding:4px 12px;border-radius:20px;font-weight:800;font-size:14px}
+.enregistre{background:#E6EAF0;color:#2B3A4E}.pris_en_charge{background:#DCEAFB;color:#123C73}
+.en_transit{background:#FDE6D8;color:#8A2C06}.en_livraison{background:#F0E3FA;color:#4F1F73}.livre{background:#D9F1E4;color:#14543A}
+.vide{padding:32px;text-align:center;color:var(--gris)}
+dialog{border:1px solid var(--bord);border-radius:16px;padding:28px;width:min(480px,92vw)}
+dialog::backdrop{background:rgba(15,27,45,.5)}
+dialog h3{margin:0 0 16px;font-size:22px}
+dialog label{display:block;font-weight:600;margin:12px 0 6px}
+dialog input,dialog select{width:100%;padding:12px;border:1px solid #8A96A8;border-radius:10px}
+.actions{display:flex;gap:12px;justify-content:flex-end;margin-top:24px}
+@media (max-width:760px){body{flex-direction:column}aside{width:auto;padding:16px 20px}main{padding:24px 20px}}
+</style>
+</head>
+<body>
+<aside>
+  <h1>Administration<br>Suivi de colis</h1>
+  <a class="actif" href="{% url 'mes_colis' %}" aria-current="page">Colis</a>
+  <a href="{% url 'nouvel_envoi' %}">Événements</a>
+  <a href="#">Agences</a>
+  <a href="#">Utilisateurs</a>
+</aside>
+<main>
+  <span id="colis-data" hidden>{{colibrut|safe}}</span>
+  <div class="haut">
+    <h2>Colis</h2>
+    <button class="btn" type="button" id="ajouter">Ajouter un événement</button>
+  </div>
+  <div class="compteurs" id="compteurs"></div>
+  <div class="outils">
+    <input id="q" type="search" placeholder="Rechercher un numéro ou un destinataire" aria-label="Rechercher">
+    <select id="f" aria-label="Filtrer par statut">{% for k  in colis_list %}<option value="{{ k.statut }}">{{ k.statut }}</option>{% endfor %}</select>
+  </div>
+ 
+    <div class="carte tableau">
+    <table>
+      <thead><tr><th>N° de suivi</th><th>Trajet</th><th>Statut</th><th>Livraison estimée</th><th>Editer</th></tr></thead>
+      <tbody>
+      {% for c in colis_list %}
+      <tr><td><a href="{% url 'suivi' c.numero_suivi %}">{{ c.numero_suivi }}</a></td><td>{{ c.ville_depart }} → {{ c.ville_arrivee }}</td><td><span class="pastille">{{ c.statut }}</span></td><td>{{ c.date_livraison_estimee|date:"d/m/Y"|default:"—" }}</td><td><a href="{% url 'contact' c.numero_suivi %}">Modifier</a></td></tr>
+      {% empty %}<tr><td colspan="5">Vous n'avez encore aucun envoi.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<dialog id="dlg">
+  <form id="form">
+    <h3>Ajouter un événement</h3>
+    <label for="c">Colis</label><select id="c" required></select>
+    <label for="s">Nouveau statut</label><select id="s" required></select>
+    <label for="l">Lieu</label><input id="l" required placeholder="Ex. Agence de [Ville]">
+    <label for="d">Description</label><input id="d" required placeholder="Ex. Départ de l'agence de tri">
+    <div class="actions">
+      <button class="btn sec" type="button" id="annuler">Annuler</button>
+      <button class="btn" type="submit">Enregistrer</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+const ST={enregistre:'Enregistré',pris_en_charge:'Pris en charge',en_transit:'En transit',en_livraison:'En livraison',livre:'Livré'};
+const colibrut = JSON.parse(document.getElementById("colis-data").textContent);
+const colis=colibrut.map(x=>({
+  n:x.numero_suivi,
+  d:x.destinataire_nom ?? x.destinataire ?? '',
+  t:(x.ville_depart ?? '?')+' → '+(x.ville_arrivee ?? '?'),
+  s:x.statut,
+  e:x.dernier_evenement ?? '',
+  l:x.date_livraison_estimee ?? ''
+}));
+const $=id=>document.getElementById(id);
+const esc=t=>String(t ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const opts=(sel,list)=>{sel.insertAdjacentHTML('beforeend',list.map(([v,l])=>`<option value="${esc(v)}">${esc(l)}</option>`).join(''))};
+opts($('f'),Object.entries(ST));opts($('s'),Object.entries(ST));opts($('c'),colis.map(x=>[x.n,x.n+' – '+x.d]));
+function rendre(){
+  const q=$('q').value.trim().toLowerCase(),f=$('f').value;
+  const lignes=colis.filter(x=>(!f||x.s===f)&&(!q||(x.n+' '+x.d).toLowerCase().includes(q)));
+  $('corps').innerHTML=lignes.map(x=>`<tr><td class="num">${esc(x.n)}</td><td>${esc(x.d)}</td><td>${esc(x.t)}</td><td><span class="p ${esc(x.s)}">${esc(ST[x.s] ?? x.s)}</span></td><td>${esc(x.e)}</td><td>${esc(x.l)}</td></tr>`).join('');
+  $('vide').hidden=lignes.length>0;
+  $('compteurs').innerHTML=Object.entries(ST).map(([k,v])=>`<div><b>${colis.filter(x=>x.s===k).length}</b><span>${v}</span></div>`).join('');
+}
+$('q').addEventListener('input',rendre);$('f').addEventListener('change',rendre);
+$('ajouter').onclick=()=>$('dlg').showModal();
+$('annuler').onclick=()=>$('dlg').close();
+$('form').addEventListener('submit',ev=>{
+  ev.preventDefault();
+  const x=colis.find(k=>k.n===$('c').value);
+  if(!x) return;
+  x.s=$('s').value;x.e=$('d').value+' · '+$('l').value;
+  $('form').reset();$('dlg').close();rendre();
+});
+rendre();
+</script>
+</body>
+</html>

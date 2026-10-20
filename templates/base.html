@@ -1,0 +1,32 @@
+{% load static %}<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block titre %}Suivi de colis{% endblock %} </title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'colis/style.css' %}">
+</head>
+<body>
+<header class="entete">
+  <button class="icone-menu" id="btn-menu" aria-label="Menu">☰</button>
+  <nav class="menu liens" id="liens" aria-label="Navigation principale">
+    <li><a href="{% url 'services' %}">Services</a></li>
+    <li><a href="{% url 'tarifs' %}">Tarifs</a></li>
+    <li><a href="{% url 'agences' %}">Agences</a></li>
+    <li><a href="">Contact</a></li>
+    {% if user.is_authenticated %}
+      <li><a href="{% url 'mes_colis' %}">Mes colis</a></li>
+      {% if user.is_staff %}<li><a class="bouton sombre" href="{% url 'admin:index' %}">Administration</a></li>{% endif %}
+      <li><form method="post" action="{% url 'deconnexion' %}" class="en-ligne">{% csrf_token %}<button class="lien" type="submit">Se déconnecter</button></form></li>
+    {% else %}
+      <li><a class="bouton sombre" href="{% url 'connexion' %}"></a></li>
+    {% endif %}
+  </nav>
+</header>
+{% if messages %}<div class="conteneur messages">{% for m in messages %}<p class="message {{ m.tags }}" role="status">{{ m }}</p>{% endfor %}</div>{% endif %}
+<main>{% block contenu %}{% endblock %}</main>
+<footer class="pied">© {% now "Y" %} </footer>
+<script src="{% static 'js/menu.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+{% load static %}<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block titre %}Suivi de colis{% endblock %} </title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'colis/style.css' %}">
+</head>
+<body>
+<header class="entete">
+  
+</header>
+<main>
+
+  <section class="conteneur hero">
+    <h1>Suivez votre colis en temps réel</h1>
+    <p class="intro">Entrez votre numéro de suivi pour connaître la position de votre colis et sa date de livraison estimée.</p>
+    <form class="carte recherche" method="get" action="{% url 'accueil' %}">
+      <label for="numero">Numéro de suivi</label>
+      <div class="ligne">
+        <input id="numero" name="numero" value="{{ numero }}" placeholder="Ex. TR-2026-000000" required>
+        <button class="bouton accent" type="submit">Suivre mon colis</button>
+      </div>
+      {% if erreur %}<p class="erreur" role="alert">{{ erreur }}</p>{% else %}
+      <p class="aide">Le numéro figure sur votre reçu d'expédition ou dans le SMS de confirmation.</p>{% endif %}
+    </form>
+  </section>
+  <section class="conteneur grille3">
+    <div class="carte"><h2>Expédier un colis</h2><p>Déposez votre colis en agence ou demandez un enlèvement à domicile.</p></div>
+    <div class="carte"><h2>Notifications</h2><p>Recevez un message à chaque étape du trajet, de la prise en charge à la livraison.</p></div>
+    <div class="carte"><h2>Trouver une agence</h2><p>Adresses, horaires et contacts de nos points de dépôt et de retrait.</p></div>
+  </section>
+</main>
+<footer class="pied">© {% now "Y" %} </footer>
+<script src="{% static 'js/menu.js' %}"></script>
+</body>
+</html>

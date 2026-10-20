@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block titre %}Mes colis{% endblock %}
+{% block contenu %}
+<section class="conteneur">
+  <div class="titre-ligne"><h1>Mes colis</h1><a class="bouton accent" href="{% url 'nouvel_envoi' %}">Expédier un colis</a></div>
+  <div class="carte tableau">
+    <table>
+      <thead><tr><th>N° de suivi</th><th>Trajet</th><th>Statut</th><th>Livraison estimée</th><th>Editer</th></tr></thead>
+      <tbody>
+      {% for c in colis_list %}
+      <tr><td><a href="{% url 'suivi' c.numero_suivi %}">{{ c.numero_suivi }}</a></td><td>{{ c.ville_depart }} → {{ c.ville_arrivee }}</td><td><span class="pastille">{{ c.get_statut_display }}</span></td><td>{{ c.date_livraison_estimee|date:"d/m/Y"|default:"—" }}</td><td><a href="{% url 'contact' c.numero_suivi %}">Modifier</a></td></tr>
+      {% empty %}<tr><td colspan="5">Vous n'avez encore aucun envoi.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

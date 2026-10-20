@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block titre %}Tarifs{% endblock %}
+{% block contenu %}
+<section class="conteneur">
+  <h1 class="titre-page">Tarifs</h1>
+  <div class="deux-col">
+    <div class="carte">
+      <h2>Grille tarifaire</h2>
+      {% for t in tarifs %}
+      <div class="evenement"><div class="quand">{{ t }}</div><div><p class="ev-titre">{{ t.prix_base|floatformat:"-2" }} {{ DEVISE }} + {{ t.prix_par_kg|floatformat:"-2" }} {{ DEVISE }} par kg</p><p class="ev-lieu">Délai indicatif : {{ t.delai_jours }} jour{{ t.delai_jours|pluralize }}</p></div></div>
+      {% empty %}<p class="aide">Les tarifs seront bientôt publiés.</p>{% endfor %}
+    </div>
+    <form class="carte" method="get">
+      <h2>Estimer le prix</h2>
+      {% include "colis/_form.html" %}
+      <button class="bouton accent" type="submit">Calculer</button>
+      {% if estimation %}<p class="resultat">Prix estimé : <b>{{ estimation.prix|floatformat:"-2" }} {{ DEVISE }}</b> · livraison sous {{ estimation.delai }} jour{{ estimation.delai|pluralize }}</p>{% endif %}
+    </form>
+  </div>
+</section>
+{% endblock %}

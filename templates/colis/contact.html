@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block titre %}Contact{% endblock %}
+{% block contenu %}
+<section class="conteneur etroit">
+  <h1 class="titre-page">Nous contacter</h1>
+  <form class="carte" method="post">{% csrf_token %}
+    {% include "colis/_form.html" %}
+    <button class="bouton accent" type="submit">Envoyer le message</button>
+  </form>
+</section>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block titre %}Agences{% endblock %}
+{% block contenu %}
+<section class="conteneur">
+  <h1 class="titre-page">Nos agences</h1>
+  <div class="grille3">
+    {% for a in agences %}
+    <div class="carte"><h2>{{ a.nom }}</h2><p>{{ a.ville }}</p>{% if a.adresse %}<p>{{ a.adresse }}</p>{% endif %}{% if a.telephone %}<p>{{ a.telephone }}</p>{% endif %}</div>
+    {% empty %}<p class="aide">Aucune agence n'est encore renseignée.</p>{% endfor %}
+  </div>
+</section>
+{% endblock %}

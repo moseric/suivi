@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block titre %}Services{% endblock %}
+{% block contenu %}
+<section class="conteneur">
+  <h1 class="titre-page">Nos services</h1>
+  <div class="grille3">
+    {% for t in tarifs %}
+    <div class="carte"><h2>{{ t }}</h2><p>Délai indicatif : {{ t.delai_jours }} jour{{ t.delai_jours|pluralize }}.</p><p>À partir de {{ t.prix_base|floatformat:"-2" }} {{ DEVISE }}.</p></div>
+    {% empty %}
+    <div class="carte"><h2>Colis standard</h2><p>Livraison économique pour vos envois courants.</p></div>
+    <div class="carte"><h2>Colis express</h2><p>Livraison prioritaire pour vos envois urgents.</p></div>
+    {% endfor %}
+    <div class="carte"><h2>Suivi en ligne</h2><p>Suivez chaque étape avec votre numéro de suivi, sans créer de compte.</p></div>
+  </div>
+  <p class="actions-page"><a class="bouton accent" href="{% url 'nouvel_envoi' %}">Expédier un colis</a></p>
+</section>
+{% endblock %}
